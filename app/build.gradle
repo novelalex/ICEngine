@@ -42,6 +42,11 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+run {
+    
+    enableAssertions = true
+}
+
 project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
 project.ext.lwjglNatives = "natives-windows"

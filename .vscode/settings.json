@@ -3,5 +3,8 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.autobuild.enabled" : true,
     "java.debug.settings.hotCodeReplace" : "auto",
-
+    "glsllint.additionalStageAssociations": {
+        ".frag": "frag",
+        ".vert": "vert"
+      }
 }
