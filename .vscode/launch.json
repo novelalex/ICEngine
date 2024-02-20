@@ -12,6 +12,15 @@
             "projectName": "app",
             "cwd": "${workspaceFolder}/app"
             
-        }
+            
+        },
+        {
+            "name": "silly run",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "./gradlew run",
+            "cwd": "${workspaceFolder}"
+            
+        },
     ]
 }

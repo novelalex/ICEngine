@@ -117,8 +117,9 @@ public class LevelEditorScene extends Scene {
         }
 
         camera.orientation.identity()
-        .rotateAxis(ICMath.remapRangef(MouseListener.getX(), 0, 1280, 0, 360) * 0.05f, new Vector3f( 0, 1, 0))
-        .rotateAxis(-ICMath.remapRangef(MouseListener.getY(), 0, 720, 90, -90) * 0.05f, new Vector3f( 1, 0, 0));
+        // added divided 2 so its not to fast moving around - zoe
+        .rotateAxis(ICMath.remapRangef(MouseListener.getX() / 2f, 0, 1280, 0, 360) * 0.05f, new Vector3f( 0, 1, 0))
+        .rotateAxis(-ICMath.remapRangef(MouseListener.getY() / 2f, 0, 720, 90, -90) * 0.05f, new Vector3f( 1, 0, 0));
         //modelMatrix.rotate(10*dt, new Vector3f(0, 1, 0));
     }
 
