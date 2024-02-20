@@ -102,6 +102,12 @@ public class LevelEditorScene extends Scene {
         } else if (KeyListener.isKeyPressed(GLFW_KEY_D)) {
             camera.position.x -= c_speed * dt;
         }
+
+        if (KeyListener.isKeyPressed(GLFW_KEY_Q)) {
+            camera.rotationAngle -= 10 * dt;
+        } else if (KeyListener.isKeyPressed(GLFW_KEY_E)) {
+            camera.rotationAngle += 10 * dt;
+        }
     }
 
     @Override

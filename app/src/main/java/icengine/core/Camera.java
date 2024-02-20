@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 public class Camera {
     private Matrix4f projectionMatrix, viewMatrix;
     public Vector2f position;
+    public float rotationAngle = 0;
 
     public Camera(Vector2f position) {
         this.position = position;
@@ -23,9 +24,10 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
-        new Quaternionf()
-            .get(viewMatrix)
-            .translate(new Vector3f(position, 0.0f));
+        viewMatrix
+            .identity()
+            .translate(new Vector3f(position, 0.0f))
+            .rotate(rotationAngle, new Vector3f(0, 0, 1));
         return viewMatrix;
     }
 
