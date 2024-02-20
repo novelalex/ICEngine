@@ -13,7 +13,6 @@ import icengine.util.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.joml.Vector2f;
@@ -33,10 +32,6 @@ public class Window {
 		this.width = 1290;
 		this.height = 720;
 		this.title = "ICEngine (Internal Combustion Engine) v0.0.2";
-		this.r = 0.5f;
-		this.g = 0.5f;
-		this.b = 0.5f;
-		this.a = 1.0f;
 		
 	}
 	
@@ -132,8 +127,7 @@ public class Window {
 			if (dt >= 0) {
 				currentScene.update(dt);
 			}
-			glClearColor(r, g, b, a);        
-			glClear(GL_COLOR_BUFFER_BIT);
+			
 
 			currentScene.render();
 			 

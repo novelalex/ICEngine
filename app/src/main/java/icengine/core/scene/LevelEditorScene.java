@@ -1,14 +1,25 @@
 package icengine.core.scene;
 
+import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -16,18 +27,19 @@ import java.nio.IntBuffer;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 
-import icengine.core.Window;
-import icengine.core.input.MouseListener;
+import icengine.core.Camera;
+import icengine.core.input.KeyListener;
 import icengine.core.renderer.Shader;
 
 public class LevelEditorScene extends Scene {
 
-    private Shader shader;
+    private Shader defaultShader;
+    private Camera camera;
     private float[] vertexArray = {
-            -0.5f,  0.5f, 0.0f,      1.0f, 0.0f, 0.0f, 1.0f, // Bottom right
-             0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f, 1.0f, // Top left
-             0.5f,  0.5f, 0.0f,      0.0f, 0.0f, 1.0f, 1.0f, // Top right
-            -0.5f, -0.5f, 0.0f,      1.0f, 1.0f, 0.0f, 1.0f, // Bottom left
+            -50.0f,  50.0f, 0.0f,      1.0f, 0.0f, 0.0f, 1.0f, // Bottom right
+             50.0f, -50.0f, 0.0f,      0.0f, 1.0f, 0.0f, 1.0f, // Top left
+             50.0f,  50.0f, 0.0f,      0.0f, 0.0f, 1.0f, 1.0f, // Top right
+            -50.0f, -50.0f, 0.0f,      1.0f, 1.0f, 0.0f, 1.0f, // Bottom left
     };
 
     private int[] elementArray = {
@@ -43,8 +55,11 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init() {
-        shader = new Shader("assets/shaders/default.vert", "assets/shaders/default.frag");
-        shader.compile();
+        defaultShader = new Shader("assets/shaders/default.vert", "assets/shaders/default.frag");
+        defaultShader.compile();
+        KeyListener.get();
+
+        camera = new Camera(new Vector2f(0.0f, 0.0f));
         
         vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
@@ -77,12 +92,27 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
-        
+        float c_speed = 500.0f;
+        if (KeyListener.isKeyPressed(GLFW_KEY_W)) {
+            camera.position.y -= c_speed * dt;
+        } else if (KeyListener.isKeyPressed(GLFW_KEY_S)) {
+            camera.position.y += c_speed * dt;
+        } else if (KeyListener.isKeyPressed(GLFW_KEY_A)) {
+            camera.position.x += c_speed * dt;
+        } else if (KeyListener.isKeyPressed(GLFW_KEY_D)) {
+            camera.position.x -= c_speed * dt;
+        }
     }
 
     @Override
     public void render() {
-        shader.use();
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);        
+		glClear(GL_COLOR_BUFFER_BIT);
+
+        defaultShader.use();
+        defaultShader.uploadMat4f("projection", camera.getProjectionMatrix());
+        defaultShader.uploadMat4f("view", camera.getViewMatrix());
+
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
@@ -92,7 +122,7 @@ public class LevelEditorScene extends Scene {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
-        shader.detach();
+        defaultShader.detach();
     }
 
 }
