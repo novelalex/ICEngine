@@ -31,7 +31,9 @@ import org.lwjgl.BufferUtils;
 
 import icengine.core.Camera;
 import icengine.core.input.KeyListener;
+import icengine.core.input.MouseListener;
 import icengine.core.renderer.Shader;
+import icengine.util.ICMath;
 
 public class LevelEditorScene extends Scene {
 
@@ -63,8 +65,7 @@ public class LevelEditorScene extends Scene {
         defaultShader = new Shader("assets/shaders/default.vert", "assets/shaders/default.frag");
         defaultShader.compile();
         KeyListener.get();
-
-        camera = new Camera(new Vector2f(0.0f, 0.0f));
+        camera = new Camera(new Vector3f(0.0f, 0.0f, -200.0f));
         modelMatrix.identity();
 
         vaoID = glGenVertexArrays();
@@ -99,23 +100,26 @@ public class LevelEditorScene extends Scene {
     @Override
     public void update(float dt) {
         float c_speed = 500.0f;
+
+        if (KeyListener.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+            c_speed *= 2.0f;
+        }
+
         if (KeyListener.isKeyPressed(GLFW_KEY_W)) {
-            camera.position.y -= c_speed * dt;
+            camera.position.sub(camera.getForward().mul(c_speed * dt));
         } else if (KeyListener.isKeyPressed(GLFW_KEY_S)) {
-            camera.position.y += c_speed * dt;
+            camera.position.add(camera.getForward().mul(c_speed * dt));
         } else if (KeyListener.isKeyPressed(GLFW_KEY_A)) {
-            camera.position.x += c_speed * dt;
+            camera.position.sub(camera.getForward().cross(new Vector3f(0, 1, 0)).normalize().mul(c_speed * dt));
         } else if (KeyListener.isKeyPressed(GLFW_KEY_D)) {
-            camera.position.x -= c_speed * dt;
+            camera.position.add(camera.getForward().cross(new Vector3f(0, 1, 0)).normalize().mul(c_speed * dt));
+
         }
 
-        if (KeyListener.isKeyPressed(GLFW_KEY_Q)) {
-            camera.rotationAngle -= 10 * dt;
-        } else if (KeyListener.isKeyPressed(GLFW_KEY_E)) {
-            camera.rotationAngle += 10 * dt;
-        }
-
-        modelMatrix.rotate(10*dt, new Vector3f(0, 1, 0));
+        camera.orientation.identity()
+        .rotateAxis(ICMath.remapRangef(MouseListener.getX(), 0, 1280, 0, 360) * 0.05f, new Vector3f( 0, 1, 0))
+        .rotateAxis(-ICMath.remapRangef(MouseListener.getY(), 0, 720, 90, -90) * 0.05f, new Vector3f( 1, 0, 0));
+        //modelMatrix.rotate(10*dt, new Vector3f(0, 1, 0));
     }
 
     @Override

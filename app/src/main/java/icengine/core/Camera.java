@@ -1,15 +1,17 @@
 package icengine.core;
 
+import org.joml.AxisAngle4f;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Camera {
     private Matrix4f projectionMatrix, viewMatrix;
-    public Vector2f position;
-    public float rotationAngle = 0;
+    public Vector3f position;
+    public Vector3f forward = new Vector3f(0, 0, -1);
+    public Quaternionf orientation = new Quaternionf();
 
-    public Camera(Vector2f position) {
+    public Camera(Vector3f position) {
         this.position = position;
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
@@ -19,19 +21,26 @@ public class Camera {
     public void adjustProjection() {
         projectionMatrix
             .identity()
-            .ortho(0.0f, 32.0f * 40.0f, 0.0f, 32.0f * 21.0f, 0.0f, 100.0f);
-            //.perspective(90.0f, (16.0f / 9.0f),  0.5f, 100.0f);
+            //.ortho(0.0f, 32.0f * 40.0f, 0.0f, 32.0f * 21.0f, 0.0f, 100.0f);
+            .perspective(45.0f, (16.0f / 9.0f),  0.5f, 1000.0f);
     }
 
     public Matrix4f getViewMatrix() {
         viewMatrix
             .identity()
-            .translate(new Vector3f(position, -20.0f))
-            .rotate(rotationAngle, new Vector3f(0, 0, 1));
+            .rotate(orientation)
+            .translate(position);
         return viewMatrix;
     }
 
     public Matrix4f getProjectionMatrix() {
         return projectionMatrix;
+    }
+
+    public Vector3f getForward() {
+        forward.set(0, 0, -1);
+        orientation.transform(forward);
+        forward.normalize();
+        return forward;
     }
 }

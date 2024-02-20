@@ -33,6 +33,7 @@ public class Window {
 		this.height = 720;
 		this.title = "ICEngine (Internal Combustion Engine) v0.0.2";
 		
+		
 	}
 	
 	public static void changeScene(int newScene) {
@@ -66,6 +67,7 @@ public class Window {
 	@SuppressWarnings("null")
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+       
 		
 		init();
 		loop();
@@ -90,6 +92,7 @@ public class Window {
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 		//glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 		// Create window
@@ -105,6 +108,8 @@ public class Window {
 		glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
 
 		glfwMakeContextCurrent(glfwWindow);
+
+		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 		// Enable v-sync
 		glfwSwapInterval(1);
