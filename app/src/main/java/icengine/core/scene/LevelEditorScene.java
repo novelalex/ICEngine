@@ -24,7 +24,9 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import icengine.core.Camera;
@@ -49,6 +51,9 @@ public class LevelEditorScene extends Scene {
     };
     private int vaoID, vboID, eboID;
 
+    private Matrix4f modelMatrix = new Matrix4f();
+
+
     public LevelEditorScene() {
         
     }
@@ -60,7 +65,8 @@ public class LevelEditorScene extends Scene {
         KeyListener.get();
 
         camera = new Camera(new Vector2f(0.0f, 0.0f));
-        
+        modelMatrix.identity();
+
         vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
 
@@ -108,6 +114,8 @@ public class LevelEditorScene extends Scene {
         } else if (KeyListener.isKeyPressed(GLFW_KEY_E)) {
             camera.rotationAngle += 10 * dt;
         }
+
+        modelMatrix.rotate(10*dt, new Vector3f(0, 1, 0));
     }
 
     @Override
@@ -118,6 +126,7 @@ public class LevelEditorScene extends Scene {
         defaultShader.use();
         defaultShader.uploadMat4f("projection", camera.getProjectionMatrix());
         defaultShader.uploadMat4f("view", camera.getViewMatrix());
+        defaultShader.uploadMat4f("model", modelMatrix);
 
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);

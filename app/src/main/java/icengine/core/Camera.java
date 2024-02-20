@@ -21,12 +21,13 @@ public class Camera {
         projectionMatrix
             .identity()
             .ortho(0.0f, 32.0f * 40.0f, 0.0f, 32.0f * 21.0f, 0.0f, 100.0f);
+            //.perspective(90.0f, (16.0f / 9.0f),  0.5f, 100.0f);
     }
 
     public Matrix4f getViewMatrix() {
         viewMatrix
             .identity()
-            .translate(new Vector3f(position, 0.0f))
+            .translate(new Vector3f(position, -20.0f))
             .rotate(rotationAngle, new Vector3f(0, 0, 1));
         return viewMatrix;
     }
