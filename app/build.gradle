@@ -25,10 +25,11 @@ dependencies {
     implementation 'com.google.guava:guava:32.1.1-jre'
 }
 
+
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -36,6 +37,7 @@ application {
     // Define the main class for the application.
     mainClass = 'icengine.App'
 }
+
 
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
@@ -50,6 +52,7 @@ run {
 project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
 project.ext.lwjglNatives = "natives-windows"
+
 
 
 dependencies {
