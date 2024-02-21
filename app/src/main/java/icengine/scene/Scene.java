@@ -1,13 +1,14 @@
-package icengine.core.scene;
+package icengine.scene;
 
 public abstract class Scene {
     public Scene() {
 
     }
     
-    public void init() {
-        
-    }
+    public abstract void init();
+
+    public abstract void deInit();
+    
     public abstract void update(float dt);
 
     public abstract void render();

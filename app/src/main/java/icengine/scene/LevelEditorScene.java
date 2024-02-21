@@ -1,4 +1,4 @@
-package icengine.core.scene;
+package icengine.scene;
 
 import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -25,7 +25,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
@@ -65,7 +64,9 @@ public class LevelEditorScene extends Scene {
         defaultShader = new Shader("assets/shaders/default.vert", "assets/shaders/default.frag");
         defaultShader.compile();
         KeyListener.get();
-        camera = new Camera(new Vector3f(0.0f, 0.0f, -200.0f));
+        camera = new Camera(
+            new Vector3f(0.0f, 0.0f, -200.0f),
+            new Matrix4f().perspective(45.0f, (16.0f / 9.0f),  0.5f, 1000.0f));
         modelMatrix.identity();
 
         vaoID = glGenVertexArrays();
@@ -143,6 +144,12 @@ public class LevelEditorScene extends Scene {
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
         defaultShader.detach();
+    }
+
+    @Override
+    public void deInit() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deInit'");
     }
 
 }

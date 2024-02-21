@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL;
 
 import icengine.core.input.KeyListener;
 import icengine.core.input.MouseListener;
-import icengine.core.scene.*;
+import icengine.scene.*;
 import icengine.util.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -37,9 +37,12 @@ public class Window {
 	}
 	
 	public static void changeScene(int newScene) {
+		if (currentScene != null) {
+			currentScene.deInit();
+		}
 		switch (newScene) {
 			case 0:
-				currentScene = new LevelEditorScene();
+				currentScene = new TestScene();
 				break;
 			case 1:
 				currentScene = new LevelScene();
@@ -72,6 +75,10 @@ public class Window {
 		init();
 		loop();
 
+		if (currentScene != null) {
+			currentScene.deInit();
+		}
+
 		glfwFreeCallbacks(glfwWindow);
 		glfwDestroyWindow(glfwWindow);
 
@@ -92,7 +99,6 @@ public class Window {
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 		//glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 		// Create window
@@ -109,7 +115,8 @@ public class Window {
 
 		glfwMakeContextCurrent(glfwWindow);
 
-		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		// Hides cursor
+		//glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 		// Enable v-sync
 		glfwSwapInterval(1);
