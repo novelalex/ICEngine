@@ -3,7 +3,6 @@ package icengine.core;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 
 public class Camera {
     private Matrix4f projectionMatrix, viewMatrix;

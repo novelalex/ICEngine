@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL;
 import icengine.core.input.KeyListener;
 import icengine.core.input.MouseListener;
 import icengine.scene.*;
-import icengine.util.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;

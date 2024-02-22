@@ -1,4 +1,4 @@
-package icengine.core.renderer.model;
+package icengine.core.renderer;
 
 import static org.lwjgl.opengl.GL45.*;
 
@@ -8,7 +8,7 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    public void render(RawModel model) {
+    public void render(Mesh model) {
         glBindVertexArray(model.getVaoID());
         glEnableVertexAttribArray(0);
         glDrawElements(GL_TRIANGLES, model.getVertexCount(), GL_UNSIGNED_INT, 0);

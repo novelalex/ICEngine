@@ -32,7 +32,6 @@ import icengine.core.Camera;
 import icengine.core.input.KeyListener;
 import icengine.core.renderer.Shader;
 import icengine.util.ICMath;
-import static icengine.util.ICMath.*;
 
 public class LevelEditorScene extends Scene {
 
