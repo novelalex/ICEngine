@@ -7,6 +7,8 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL45.*;
 
 import icengine.core.Camera;
@@ -16,39 +18,98 @@ import icengine.core.renderer.Shader;
 import icengine.core.renderer.Texture;
 import icengine.util.ICMath;
 
-
-public class TestScene extends Scene{
+public class TestScene extends Scene {
     private Mesh squareMesh;
     private Camera camera;
     private Shader defaultShader;
     private Texture texture = new Texture("assets/textures/real.png");
-    private Matrix4f modelMatrix = new Matrix4f().rotate((float)Math.toRadians(180), new Vector3f(ICMath.X_AXIS));
+    private Matrix4f modelMatrix = new Matrix4f();
 
-    private float[] vertices = {
-        -0.5f, 0.5f, 0f,    // TL
-        -0.5f, -0.5f, 0f,   // BL
-        0.5f, -0.5f, 0f,    // BR
-        0.5f, 0.5f, 0f,     // TR
-      };
-    
-    private int[] indices = {
-        0, 1, 3,    // TL, BL, TR
-        3, 1, 2     // TR, BL, BR
+    float[] vertices = {
+            -0.5f, 0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            0.5f, -0.5f, -0.5f,
+            0.5f, 0.5f, -0.5f,
+
+            -0.5f, 0.5f, 0.5f,
+            -0.5f, -0.5f, 0.5f,
+            0.5f, -0.5f, 0.5f,
+            0.5f, 0.5f, 0.5f,
+
+            0.5f, 0.5f, -0.5f,
+            0.5f, -0.5f, -0.5f,
+            0.5f, -0.5f, 0.5f,
+            0.5f, 0.5f, 0.5f,
+
+            -0.5f, 0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, 0.5f,
+            -0.5f, 0.5f, 0.5f,
+
+            -0.5f, 0.5f, 0.5f,
+            -0.5f, 0.5f, -0.5f,
+            0.5f, 0.5f, -0.5f,
+            0.5f, 0.5f, 0.5f,
+
+            -0.5f, -0.5f, 0.5f,
+            -0.5f, -0.5f, -0.5f,
+            0.5f, -0.5f, -0.5f,
+            0.5f, -0.5f, 0.5f
+
     };
 
-    private float[] uvCoords = {
-        0, 1,
-        0, 0,
-        1, 0,
-        1, 1
+    float[] textureCoords = {
+
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0,
+            0, 0,
+            0, 1,
+            1, 1,
+            1, 0
+
     };
+
+    int[] indices = {
+            0, 1, 3,
+            3, 1, 2,
+            4, 5, 7,
+            7, 5, 6,
+            8, 9, 11,
+            11, 9, 10,
+            12, 13, 15,
+            15, 13, 14,
+            16, 17, 19,
+            19, 17, 18,
+            20, 21, 23,
+            23, 21, 22
+
+    };
+
     public TestScene() {
-        
+
     }
-    
+
     @Override
     public void init() {
-        squareMesh = new Mesh(vertices, indices, uvCoords);
+        squareMesh = new Mesh(vertices, indices, textureCoords);
         defaultShader = new Shader("assets/shaders/default.vert", "assets/shaders/default.frag");
         defaultShader.compile();
         defaultShader.bindAttribute(0, "inVertex");
@@ -56,9 +117,9 @@ public class TestScene extends Scene{
 
         KeyListener.get();
         camera = new Camera(
-            new Vector3f(0.0f, 0.0f, 5.0f),
-            new Matrix4f().perspective(45.0f, (16.0f / 9.0f),  0.5f, 1000.0f));
-        //modelMatrix.identity();
+                new Vector3f(0.0f, 0.0f, 5.0f),
+                new Matrix4f().perspective(45.0f, (16.0f / 9.0f), 0.5f, 1000.0f));
+        // modelMatrix.identity();
     }
 
     @Override
@@ -86,17 +147,17 @@ public class TestScene extends Scene{
             camera.move(new Vector3f(ICMath.RIGHT), c_speed * dt);
         }
 
-        modelMatrix.rotate((float)Math.toRadians(10.0f) * dt, new Vector3f(ICMath.Y_AXIS));
+        modelMatrix.rotate((float) Math.toRadians(10.0f) * dt, new Vector3f(ICMath.Y_AXIS));
     }
-
 
     @Override
     public void render() {
+        glEnable(GL_DEPTH_TEST);
         glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         defaultShader.use();
-        
+
         defaultShader.uploadTexture("tex", 0);
         glActiveTexture(GL_TEXTURE0);
         texture.bind();
@@ -108,5 +169,5 @@ public class TestScene extends Scene{
         texture.unbind();
         defaultShader.detach();
     }
-    
+
 }

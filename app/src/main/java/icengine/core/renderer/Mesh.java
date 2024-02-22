@@ -44,8 +44,8 @@ public class Mesh {
         vertexCount = indices.length;
         bindIndicesBuffer(indices);
         // TODO: Put everything in a single VBO like Scott does
-        storeVec3InAttributeList(0, positions);
-        storeVec2InAttributeList(1, uvCoords);
+        storeDataInAttributeList(0, 3, positions);
+        storeDataInAttributeList(1, 2, uvCoords);
         unbindVAO();
     }
 
@@ -55,23 +55,13 @@ public class Mesh {
         return vaoID;
     }
 
-    private void storeVec3InAttributeList(int attributeNumber, float[] data) {
+    private void storeDataInAttributeList(int attributeNumber, int size, float[] data) {
         int vboID = glGenBuffers();
         vbos.add(vboID);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
         FloatBuffer buffer = storeDataInFloatBuffer(data);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attributeNumber, 3, GL_FLOAT, false, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-
-    private void storeVec2InAttributeList(int attributeNumber, float[] data) {
-        int vboID = glGenBuffers();
-        vbos.add(vboID);
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        FloatBuffer buffer = storeDataInFloatBuffer(data);
-        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(attributeNumber, 2, GL_FLOAT, false, 0, 0);
+        glVertexAttribPointer(attributeNumber, size, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 

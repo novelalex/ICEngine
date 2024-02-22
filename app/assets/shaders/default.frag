@@ -3,8 +3,7 @@
 
 layout(location = 0) out vec4 fragColor;
 
-layout (location=0) in vec4 fColor;
-layout (location=1) in vec2 fTexCoord;
+layout (location=0) in vec2 fTexCoord;
 
 uniform sampler2D tex;
 
