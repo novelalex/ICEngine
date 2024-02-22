@@ -31,6 +31,8 @@ import org.lwjgl.BufferUtils;
 import icengine.core.Camera;
 import icengine.core.input.KeyListener;
 import icengine.core.renderer.Shader;
+import icengine.util.ICMath;
+import static icengine.util.ICMath.*;
 
 public class LevelEditorScene extends Scene {
 
@@ -105,13 +107,13 @@ public class LevelEditorScene extends Scene {
         }
 
         if (KeyListener.isKeyPressed(GLFW_KEY_W)) {
-            camera.position.sub(camera.getForward().mul(c_speed * dt));
+            camera.move(new Vector3f(ICMath.FORWARD), c_speed * dt);
         } else if (KeyListener.isKeyPressed(GLFW_KEY_S)) {
-            camera.position.add(camera.getForward().mul(c_speed * dt));
+            camera.move(new Vector3f(ICMath.BACKWARD), c_speed * dt);
         } else if (KeyListener.isKeyPressed(GLFW_KEY_A)) {
-            camera.position.sub(camera.getForward().cross(new Vector3f(0, 1, 0)).normalize().mul(c_speed * dt));
+            camera.move(new Vector3f(ICMath.LEFT), c_speed * dt);
         } else if (KeyListener.isKeyPressed(GLFW_KEY_D)) {
-            camera.position.add(camera.getForward().cross(new Vector3f(0, 1, 0)).normalize().mul(c_speed * dt));
+            camera.move(new Vector3f(ICMath.RIGHT), c_speed * dt);
         }
 
         // camera.orientation.identity()

@@ -3,15 +3,17 @@ package icengine.core;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class Camera {
     private Matrix4f projectionMatrix, viewMatrix;
-    public Vector3f position;
+    private Vector3f position;
     public Vector3f forward = new Vector3f(0, 0, -1);
     public Quaternionf orientation = new Quaternionf();
 
     public Camera(Vector3f position, Matrix4f proj) {
-        this.position = position;
+        // Hide the fact that the camera is actually at the origin and the world is moved around it
+        this.position = position.negate();
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         adjustProjection(proj);
@@ -42,4 +44,23 @@ public class Camera {
         forward.normalize();
         return forward;
     }
+
+    public void setPosition(Vector3f position) {
+        this.position = position.negate();
+    }
+
+    public Vector3f getPosition() {
+        return position.negate();
+    }
+
+    public void setOrientation(Quaternionf orientation) {
+        this.orientation = orientation;
+    }
+
+    public void move(Vector3f direction, float amount) {
+        // Hide the fact that the camera is actually at the origin and the world is moved around it
+        position.add(((Vector3f)direction).negate().mul(amount));
+    }
+
+    
 }

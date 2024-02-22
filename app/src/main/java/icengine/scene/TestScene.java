@@ -11,6 +11,9 @@ import icengine.core.renderer.Shader;
 import icengine.core.renderer.model.Loader;
 import icengine.core.renderer.model.RawModel;
 import icengine.core.renderer.model.Renderer;
+import icengine.util.ICMath;
+import static icengine.util.ICMath.*;
+
 
 public class TestScene extends Scene{
 
@@ -45,7 +48,7 @@ public class TestScene extends Scene{
         defaultShader.compile();
         KeyListener.get();
         camera = new Camera(
-            new Vector3f(0.0f, 0.0f, -5.0f),
+            new Vector3f(0.0f, 0.0f, 5.0f),
             new Matrix4f().perspective(45.0f, (16.0f / 9.0f),  0.5f, 1000.0f));
         //modelMatrix.identity();
         defaultShader.bindAttribute(0, "inVertex");
@@ -66,13 +69,13 @@ public class TestScene extends Scene{
         }
 
         if (KeyListener.isKeyPressed(GLFW_KEY_W)) {
-            camera.position.z -= c_speed * dt;
+            camera.move(new Vector3f(ICMath.FORWARD), c_speed * dt);
         } else if (KeyListener.isKeyPressed(GLFW_KEY_S)) {
-            camera.position.z += c_speed * dt;
+            camera.move(new Vector3f(ICMath.BACKWARD), c_speed * dt);
         } else if (KeyListener.isKeyPressed(GLFW_KEY_A)) {
-            camera.position.x -= c_speed * dt;
+            camera.move(new Vector3f(ICMath.LEFT), c_speed * dt);
         } else if (KeyListener.isKeyPressed(GLFW_KEY_D)) {
-            camera.position.x += c_speed * dt;
+            camera.move(new Vector3f(ICMath.RIGHT), c_speed * dt);
         }
 
         modelMatrix.rotate((float)Math.toRadians(10.0f) * dt, new Vector3f(0.0f, 1.0f, 0.0f));

@@ -130,8 +130,8 @@ public class Window {
 	}
 
 	public void loop() {
-		float beginTime = Time.getTime();
-		float endTime = Time.getTime();
+		float beginTime = (float)glfwGetTime();
+		float endTime;
 		
 		while (!glfwWindowShouldClose(glfwWindow)) {
 			glfwPollEvents();
@@ -145,7 +145,7 @@ public class Window {
 			 
 			glfwSwapBuffers(glfwWindow);
 
-			endTime = Time.getTime();
+			endTime = (float)glfwGetTime();
 			dt = endTime - beginTime;
 			beginTime = endTime;
 		}
