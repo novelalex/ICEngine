@@ -72,6 +72,18 @@ public class Shader {
             System.out.println(glGetProgramInfoLog(shaderProgramID, len));
             assert false : "";
         }
+        glValidateProgram(shaderProgramID);
+        success = glGetProgrami(shaderProgramID, GL_VALIDATE_STATUS);
+        if (success == GL_FALSE) {
+            int len = glGetProgrami(shaderProgramID, GL_INFO_LOG_LENGTH);
+            System.out.println("Error: '" + vertexPath + ", " + fragmentPath + "'\n\tValidation failed");
+            System.out.println(glGetProgramInfoLog(shaderProgramID, len));
+            assert false : "";
+        }
+    }
+
+    public void bindAttribute(int attributeNumber, String variableName) {
+        glBindAttribLocation(shaderProgramID, attributeNumber, variableName);
     }
 
     public void use() {
@@ -80,6 +92,10 @@ public class Shader {
     }
     public void detach() {
         glUseProgram(0);
+    }
+
+    public void deInit() {
+        glDeleteProgram(shaderProgramID);
     }
 
     public void uploadMat4f(String varName, Matrix4f mat4) {

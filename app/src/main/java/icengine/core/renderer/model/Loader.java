@@ -20,7 +20,12 @@ public class Loader {
         return new RawModel(vaoID, indices.length);
     }
 
-    public void cleanUp() {
+    public int loadTexture(String fileName) {
+        //Texture texture = null;
+        return 0;
+    }
+
+    public void deInit() {
         for (int vao: vaos) {
             glDeleteVertexArrays(vao);
         }

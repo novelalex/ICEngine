@@ -99,7 +99,7 @@ public class Window {
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-		//glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 		// Create window
 		glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
@@ -116,7 +116,7 @@ public class Window {
 		glfwMakeContextCurrent(glfwWindow);
 
 		// Hides cursor
-		//glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 		// Enable v-sync
 		glfwSwapInterval(1);

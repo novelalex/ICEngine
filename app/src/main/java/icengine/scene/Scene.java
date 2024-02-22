@@ -1,6 +1,9 @@
 package icengine.scene;
 
 public abstract class Scene {
+
+    
+
     public Scene() {
 
     }
