@@ -32,6 +32,7 @@ public class MouseListener {
         get().xPos = xPos;
         get().yPos = yPos;
         get().isDragging = get().mouseButtonPressed[0] || get().mouseButtonPressed[1] || get().mouseButtonPressed[2];
+        //System.out.println("Mouse position: " + xPos + ", " + yPos);
     }
 
     public static void mouseButtonCallback(long window, int button, int action, int mods) {

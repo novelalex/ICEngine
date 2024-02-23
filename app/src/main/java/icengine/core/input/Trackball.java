@@ -49,7 +49,7 @@ public class Trackball {
     }   
 
     private Vector3f getMouseVector(double x, double y) {
-        Vector3f mousePos = new Vector3f((float) x, (float) y, 0.0f);
+        Vector3f mousePos = new Vector3f((float) x - 640, (float) y - 360, 0.0f);
         //System.out.println(mousePos.x + " " + mousePos.y + " " + mousePos.z);
         Vector3f v = new Vector3f();
         mousePos.mulDirection(invNDC, v);
