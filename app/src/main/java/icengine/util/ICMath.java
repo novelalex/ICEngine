@@ -1,7 +1,11 @@
 package icengine.util;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
 public class ICMath {
 
+    public static final float SMOL = 1.0e-7f;
 
     // Constant direction vectors to make life easier
     public static final float[] UP = {0.0f, 1.0f, 0.0f};
@@ -19,5 +23,19 @@ public class ICMath {
     public static float remapRangef(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
         float normalizedValue = (value - fromLow) / (fromHigh - fromLow);
         return toLow + normalizedValue * (toHigh - toLow);
+    }
+
+
+    // this is just scotts code
+    public static Matrix4f viewportNDC(int width, int height) {
+        float minZ = -1.0f;
+        float maxZ = 1.0f;
+    
+        Matrix4f m = new Matrix4f()
+        .scale(1.0f, -1.0f, 1.0f)
+        .scale((float)width/ 2.0f, (float)height / 2.0f, maxZ - minZ)
+        .translate(new Vector3f((float)width/ 2.0f, (float)height/ 2.0f, minZ));
+        //m = m3.mul(m2.mul(m1));
+        return m;
     }
 }

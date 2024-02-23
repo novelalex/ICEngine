@@ -7,8 +7,9 @@ public class MouseListener {
     private double scrollX, scrollY;
     private double xPos, yPos, lastY, lastX;
     private boolean mouseButtonPressed[] = new boolean[3];
+    private int mouseButtonDown = 0;
     private boolean isDragging;
-
+    
     private MouseListener() {
         this.scrollX = 0.0;
         this.scrollY = 0.0;

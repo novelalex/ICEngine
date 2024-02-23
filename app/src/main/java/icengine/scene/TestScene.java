@@ -5,130 +5,65 @@ import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL45.*;
 
 import icengine.core.Camera;
 import icengine.core.input.KeyListener;
+import icengine.core.input.MouseListener;
+import icengine.core.input.Trackball;
 import icengine.core.renderer.Mesh;
 import icengine.core.renderer.Shader;
 import icengine.core.renderer.Texture;
 import icengine.util.ICMath;
 
+
 public class TestScene extends Scene {
-    private Mesh squareMesh;
+    private Mesh mesh;
     private Camera camera;
     private Shader defaultShader;
-    private Texture texture = new Texture("assets/textures/real.png");
+    private Texture texture;
     private Matrix4f modelMatrix = new Matrix4f();
-
-    float[] vertices = {
-            -0.5f, 0.5f, -0.5f,
-            -0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, -0.5f,
-            0.5f, 0.5f, -0.5f,
-
-            -0.5f, 0.5f, 0.5f,
-            -0.5f, -0.5f, 0.5f,
-            0.5f, -0.5f, 0.5f,
-            0.5f, 0.5f, 0.5f,
-
-            0.5f, 0.5f, -0.5f,
-            0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, 0.5f,
-            0.5f, 0.5f, 0.5f,
-
-            -0.5f, 0.5f, -0.5f,
-            -0.5f, -0.5f, -0.5f,
-            -0.5f, -0.5f, 0.5f,
-            -0.5f, 0.5f, 0.5f,
-
-            -0.5f, 0.5f, 0.5f,
-            -0.5f, 0.5f, -0.5f,
-            0.5f, 0.5f, -0.5f,
-            0.5f, 0.5f, 0.5f,
-
-            -0.5f, -0.5f, 0.5f,
-            -0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, -0.5f,
-            0.5f, -0.5f, 0.5f
-
-    };
-
-    float[] textureCoords = {
-
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-            0, 1,
-            1, 1,
-            1, 0
-
-    };
-
-    int[] indices = {
-            0, 1, 3,
-            3, 1, 2,
-            4, 5, 7,
-            7, 5, 6,
-            8, 9, 11,
-            11, 9, 10,
-            12, 13, 15,
-            15, 13, 14,
-            16, 17, 19,
-            19, 17, 18,
-            20, 21, 23,
-            23, 21, 22
-
-    };
-
+    private Trackball trackball;
     public TestScene() {
 
     }
 
     @Override
     public void init() {
-        squareMesh = new Mesh(vertices, indices, textureCoords);
+        mesh = new Mesh("assets/meshes/Sphere.obj");
+        texture = new Texture("assets/textures/earthclouds.jpg");
         defaultShader = new Shader("assets/shaders/default.vert", "assets/shaders/default.frag");
         defaultShader.compile();
         defaultShader.bindAttribute(0, "inVertex");
         defaultShader.bindAttribute(1, "inTexCoord");
 
+        trackball = new Trackball();
+
         KeyListener.get();
         camera = new Camera(
                 new Vector3f(0.0f, 0.0f, 5.0f),
                 new Matrix4f().perspective(45.0f, (16.0f / 9.0f), 0.5f, 1000.0f));
-        // modelMatrix.identity();
+        modelMatrix.identity();
     }
 
     @Override
     public void deInit() {
-        squareMesh.deInit();
+        mesh.deInit();
         texture.deInit();
         defaultShader.deInit();
     }
-
+    
+    @Override
+    public void handleEvents() {
+        trackball.handleEvents();
+    }
+    
     @Override
     public void update(float dt) {
         float c_speed = 10.0f;
@@ -147,7 +82,12 @@ public class TestScene extends Scene {
             camera.move(new Vector3f(ICMath.RIGHT), c_speed * dt);
         }
 
-        modelMatrix.rotate((float) Math.toRadians(10.0f) * dt, new Vector3f(ICMath.Y_AXIS));
+        modelMatrix
+            //.rotate(trackball.getQuat());
+            .rotate((float) Math.toRadians(10.0f) * dt, new Vector3f(ICMath.Y_AXIS));
+
+        camera.setOrientation(trackball.getQuat());
+        
     }
 
     @Override
@@ -165,9 +105,10 @@ public class TestScene extends Scene {
         defaultShader.uploadMat4f("projection", camera.getProjectionMatrix());
         defaultShader.uploadMat4f("view", camera.getViewMatrix());
         defaultShader.uploadMat4f("model", modelMatrix);
-        squareMesh.render();
+        mesh.render();
         texture.unbind();
         defaultShader.detach();
     }
+
 
 }

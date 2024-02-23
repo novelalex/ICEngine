@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL;
 
 import icengine.core.input.KeyListener;
 import icengine.core.input.MouseListener;
+import icengine.core.input.WindowListener;
 import icengine.scene.*;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -28,7 +29,7 @@ public class Window {
 	private static Scene currentScene = null;
 	
 	private Window() {
-		this.width = 1290;
+		this.width = 1280;
 		this.height = 720;
 		this.title = "ICEngine (Internal Combustion Engine) v0.0.2";
 		
@@ -40,15 +41,8 @@ public class Window {
 			currentScene.deInit();
 		}
 		switch (newScene) {
-			case 0:
-				currentScene = new TestScene();
-				break;
-			case 1:
-				currentScene = new LevelScene();
-				break;
-			default:
-				assert false : "Unknown scene \"" + newScene + "\"";
-				break;
+			case 0 -> currentScene = new TestScene();
+			default -> {assert false : "Unknown scene \"" + newScene + "\"";}
 		}
 		currentScene.init();
 	}
@@ -97,8 +91,8 @@ public class Window {
 		// Configure GLFW
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-		glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+		//glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+		//glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 		// Create window
 		glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
@@ -111,11 +105,12 @@ public class Window {
 		glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
 		glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
 		glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
+		glfwSetWindowSizeCallback(glfwWindow, WindowListener::windowResizeCallback);
 
 		glfwMakeContextCurrent(glfwWindow);
 
 		// Hides cursor
-		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		//glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 		// Enable v-sync
 		glfwSwapInterval(1);
@@ -136,10 +131,9 @@ public class Window {
 			glfwPollEvents();
 
 			if (dt >= 0) {
+				currentScene.handleEvents();
 				currentScene.update(dt);
 			}
-			
-
 			currentScene.render();
 			 
 			glfwSwapBuffers(glfwWindow);
@@ -147,6 +141,8 @@ public class Window {
 			endTime = (float)glfwGetTime();
 			dt = endTime - beginTime;
 			beginTime = endTime;
+
+			WindowListener.resetSizeChangedFlag();
 		}
 	}
 }
