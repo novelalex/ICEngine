@@ -1,28 +1,18 @@
 package icengine.scene;
 
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_FILL;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 import icengine.core.Camera;
 import icengine.core.input.KeyListener;
 import icengine.core.input.Trackball;
 import icengine.core.renderer.Mesh;
 import icengine.core.renderer.Shader;
+import icengine.core.renderer.Skybox;
 import icengine.core.renderer.Texture;
 import icengine.util.ICMath;
 
@@ -35,6 +25,7 @@ public class TestScene extends Scene {
     private Matrix4f modelMatrix = new Matrix4f();
     private Trackball trackball;
     private boolean drawInWireMode = false;
+    private Skybox skybox;
     public TestScene() {
 
     }
@@ -47,6 +38,9 @@ public class TestScene extends Scene {
         defaultShader.compile();
         defaultShader.bindAttribute(0, "inVertex");
         defaultShader.bindAttribute(1, "inTexCoord");
+
+        skybox=new Skybox();
+        skybox.init("textures/skyBox/posx.jpg", "textures/skyBox/negx.jpg", "textures/skyBox/posy.jpg", "textures/skyBox/negy.jpg", "textures/skyBox/posz.jpg", "textures/skyBox/negz.jpg");
 
         trackball = new Trackball();
 
@@ -113,7 +107,7 @@ public class TestScene extends Scene {
 	    }else{
 		    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	    }
-
+        skybox.render(camera);
         defaultShader.use();
 
         defaultShader.uploadTexture("tex", 0);
