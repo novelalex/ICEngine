@@ -40,7 +40,7 @@ public class TestScene extends Scene {
         defaultShader.bindAttribute(1, "inTexCoord");
 
         skybox=new Skybox();
-        skybox.init("textures/skyBox/posx.jpg", "textures/skyBox/negx.jpg", "textures/skyBox/posy.jpg", "textures/skyBox/negy.jpg", "textures/skyBox/posz.jpg", "textures/skyBox/negz.jpg");
+        skybox.init("assets/textures/skybox/posx.jpg", "assets/textures/skybox/negx.jpg", "assets/textures/skybox/posy.jpg", "assets/textures/skybox/negy.jpg", "assets/textures/skybox/posz.jpg", "assets/textures/skybox/negz.jpg");
 
         trackball = new Trackball();
 
