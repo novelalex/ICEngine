@@ -41,7 +41,8 @@ public class TestScene extends Scene {
 
         skybox=new Skybox();
         skybox.init("assets/textures/skybox/posx.jpg", "assets/textures/skybox/negx.jpg", "assets/textures/skybox/posy.jpg", "assets/textures/skybox/negy.jpg", "assets/textures/skybox/posz.jpg", "assets/textures/skybox/negz.jpg");
-
+        skybox.onCreate();
+        
         trackball = new Trackball();
 
         KeyListener.get();

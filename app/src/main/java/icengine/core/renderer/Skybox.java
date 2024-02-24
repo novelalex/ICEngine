@@ -56,9 +56,7 @@ public class Skybox {
 
     public boolean onCreate() {
         cube = new Mesh("assets/meshes/Cube.obj");
-       // boolean status = cube.init();s
-      //  if (!status)
-      //      return status;
+
         shader = new Shader("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
         shader.bindAttribute(0, "inVertex");
         shader.compile();
