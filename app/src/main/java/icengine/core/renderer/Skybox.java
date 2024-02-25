@@ -1,8 +1,40 @@
 package icengine.core.renderer;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glCullFace;
+import static org.lwjgl.opengl.GL11.glDeleteTextures;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.opengl.GL11.glTexParameteri;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.stb.STBImage.stbi_image_free;
+import static org.lwjgl.stb.STBImage.stbi_load;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -35,14 +67,13 @@ public class Skybox {
 
     private Quaternionf o; // Orientation
     private Vector3f p; // Position
-    private Quaternionf trkBll;
 
     public void init(String right_, String left_, String top_, String bottom_, String back_, String front_) {
         cube = new Mesh("assets/meshes/Cube.obj");
 
         textureID = glGenTextures();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-
+        
+        
         files[0] = right_;
         files[1] = left_;
         files[2] = top_;
@@ -50,27 +81,32 @@ public class Skybox {
         files[4] = back_;
         files[5] = front_;
 
-        o = new Quaternionf(1.0f, 0.0f, 0.0f, 0.0f);
+        o = new Quaternionf();
         p = new Vector3f(0.0f, 0.0f, 0.0f);
-    }
-
-    public boolean onCreate() {
-        cube = new Mesh("assets/meshes/Cube.obj");
 
         shader = new Shader("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
         shader.bindAttribute(0, "inVertex");
         shader.compile();
-
-        return loadImages();
+        loadImages();
     }
+
+    public void deInit() {
+        glDeleteTextures(textureID);
+        cube.deInit();
+        shader.deInit();
+    }
+    
 
     public Matrix4f v() {
-        return new Matrix4f().rotation(trkBll).translate(p).rotate(o).scale(2.0f);
+        // System.out.println(trkBll);
+        // System.out.println(p);
+        // System.out.println(o);
+        return new Matrix4f().translate(p).rotate(o).scale(1f);
     }
 
-    public Quaternionf setTrackball(Quaternionf _t) {
-        trkBll = _t;
-        return trkBll;
+    public void setViewOrientation(Quaternionf o) {
+        System.out.println(o);
+        this.o = o;
     }
 
     public float setZoom(float _z, float maxZoom, float minZoom) {
@@ -82,52 +118,33 @@ public class Skybox {
     }
 
     public void render(Camera _cam) {
-        glDepthMask(false);
-        glCullFace(GL_NONE);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
         shader.use();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-        
         shader.uploadTexture("skyboxTexture", 0);
-        glActiveTexture(GL_TEXTURE0);
         shader.uploadMat4f("projectionMatrix", _cam.getProjectionMatrix());
         shader.uploadMat4f("viewMatrix", v());
-
+        glBindTexture(GL_TEXTURE_2D, textureID);
         cube.render();
-        glDepthMask(true);
-        glCullFace(GL_BACK);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
         shader.detach();
     }
 
-    public boolean loadImages() {
+    public void loadImages() {
         for (int i = 0; i < 6; i++) {
-            ByteBuffer imageBuffer;
-            IntBuffer widthBuffer = BufferUtils.createIntBuffer(1);
-            IntBuffer heightBuffer = BufferUtils.createIntBuffer(1);
-            IntBuffer channelsBuffer = BufferUtils.createIntBuffer(1);
-    
-            // Load image using STB library
-            imageBuffer = STBImage.stbi_load(files[i], widthBuffer, heightBuffer, channelsBuffer, 0);
-            if (imageBuffer == null) {
-                System.err.println("Failed to load image: " + files[i]);
-                return false;
-            }
-    
-            int width = 0;
-            int height = 0;
-            if (widthBuffer.hasRemaining() && heightBuffer.hasRemaining()) {
-                width = widthBuffer.get();
-                height = heightBuffer.get();
+            IntBuffer width = BufferUtils.createIntBuffer(1);
+            IntBuffer height = BufferUtils.createIntBuffer(1);
+            IntBuffer channels = BufferUtils.createIntBuffer(1);
+            ByteBuffer image = stbi_load(files[i], width, height, channels, 0);
+            int mode = (channels.get(0) == 4) ? GL_RGBA : GL_RGB;
+            if (image != null) {
+                glTexImage2D(cubeMap[i], 0, mode, width.get(), height.get(), 0, mode, GL_UNSIGNED_BYTE, image);
+                stbi_image_free(image);
             } else {
-                System.err.println("Failed to get image dimensions for: " + files[i]);
-                STBImage.stbi_image_free(imageBuffer);
-                return false;
+                assert false : "Error: Texture failed to load at path: " + files[i];
             }
-    
-            // Upload texture to OpenGL
-            glTexImage2D(cubeMap[i], 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageBuffer);
-    
-            // Free image buffer
-            STBImage.stbi_image_free(imageBuffer);
         }
     
         // Set texture parameters
@@ -136,7 +153,5 @@ public class Skybox {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    
-        return true;
     }
 }

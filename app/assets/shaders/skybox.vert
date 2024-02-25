@@ -4,10 +4,8 @@
 
 layout(location = 0) in vec3 inVertex;
 
-
-layout(location = 0) uniform mat4 projectionMatrix;
-layout(location = 1) uniform mat4 viewMatrix;
-
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 out vec3 uvwCoords;
 

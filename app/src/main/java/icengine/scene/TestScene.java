@@ -41,7 +41,6 @@ public class TestScene extends Scene {
 
         skybox=new Skybox();
         skybox.init("assets/textures/skybox/posx.jpg", "assets/textures/skybox/negx.jpg", "assets/textures/skybox/posy.jpg", "assets/textures/skybox/negy.jpg", "assets/textures/skybox/posz.jpg", "assets/textures/skybox/negz.jpg");
-        skybox.onCreate();
         
         trackball = new Trackball();
 
@@ -57,6 +56,7 @@ public class TestScene extends Scene {
         mesh.deInit();
         texture.deInit();
         defaultShader.deInit();
+        skybox.deInit();
     }
     
     @Override
@@ -91,7 +91,7 @@ public class TestScene extends Scene {
             //.rotate((float) Math.toRadians(10.0f) * dt, new Vector3f(ICMath.Y_AXIS));
 
         //camera.setOrientation(trackball.getQuat());
-        
+        skybox.setViewOrientation(trackball.getQuat());
     }
 
     @Override
