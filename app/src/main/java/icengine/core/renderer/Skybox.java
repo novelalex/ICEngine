@@ -105,7 +105,7 @@ public class Skybox {
     }
 
     public void setViewOrientation(Quaternionf o) {
-        System.out.println(o);
+        //System.out.println(o);
         this.o = o;
     }
 
@@ -153,5 +153,9 @@ public class Skybox {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    }
+
+    public int getTextureID() {
+        return textureID;
     }
 }
